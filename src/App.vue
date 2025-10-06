@@ -1,19 +1,10 @@
 <template>
-  <div class="container mx-auto">
-    <h1 class="text-2xl font-bold my-4">WireGuard Manager</h1>
-    <WgPeersTable />
-    <AddPeerForm />
+  <div class="max-w-6xl mx-auto py-10">
+    <h1 class="text-3xl font-bold mb-8 text-center">⚡ WireGuard Manager</h1>
+    <WgPeersGrid />
   </div>
 </template>
 
 <script setup>
-import WgPeersTable from './components/WgPeersTable.vue';
-import AddPeerForm from './components/AddPeerForm.vue';
+import WgPeersGrid from './components/WgPeersGrid.vue';
 </script>
-
-<style>
-body {
-  font-family: system-ui, sans-serif;
-  background-color: #fafafa;
-}
-</style>
