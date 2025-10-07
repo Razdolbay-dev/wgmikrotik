@@ -10,7 +10,7 @@ MT_PASS='api_pass'
 PORT=3000 #Backend port
 WG_INTERFACE='wg_iface_mt'
 WG_ENDPOINT='ip/dns_mt'
-WG_PORT='51820'
+WG_PORT='WG_ENDPOINT_PORT'
 WG_DNS='1.1.1.1'
 WG_PUBLICKEY='MikrotikPublicKeyHere'
 ```
