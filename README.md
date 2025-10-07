@@ -21,4 +21,7 @@ WG_PUBLICKEY='MikrotikPublicKeyHere'
 1. Настраиваем Mikrotik , создаем интерфейс , рисуем роутинги и так далее
 2. Заполняем .env
 3. клонируем проект
-4. можно заморочиться и поставить concurentl
+4. npm install
+5. npm run dev
+
+Работаем
