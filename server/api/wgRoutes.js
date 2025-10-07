@@ -37,21 +37,33 @@ export default (config) => {
 
     // Добавить пира
     router.post('/peer', async (req, res) => {
-        const { interfaceName, publicKey, allowedAddress } = req.body;
-        if (!interfaceName || !publicKey) return res.status(400).json({ error: 'Missing fields' });
+        const { interfaceName, peername, allowedAddress } = req.body;
+        if (!interfaceName || !peername)
+            return res.status(400).json({ error: 'Missing fields' });
+
+        console.log('INFO',
+            `name=${peername}`,
+            `interface=${interfaceName}`,
+            `allowed-address=${allowedAddress || ''}`
+        );
 
         try {
             await sendCommand(config, [
                 '/interface/wireguard/peers/add',
+                `=name=${peername}`,
                 `=interface=${interfaceName}`,
-                `=public-key=${publicKey}`,
+                '=private-key=auto',
                 `=allowed-address=${allowedAddress || ''}`
             ]);
+
+            console.log(`Peer ${peername} added successfully`);
             res.json({ success: true });
         } catch (err) {
+            console.error('Error adding peer:', err.message);
             res.status(500).json({ error: err.message });
         }
     });
+
 
     // Удалить пира
     router.delete('/peer/:id', async (req, res) => {
@@ -63,6 +75,17 @@ export default (config) => {
             res.status(500).json({ error: err.message });
         }
     });
+
+    router.get('/config-info', (req, res) => {
+        res.json({
+            endpoint: process.env.WG_ENDPOINT,
+            port: process.env.WG_PORT,
+            dns: process.env.WG_DNS,
+            interface: process.env.WG_INTERFACE,
+            publickey: process.env.WG_PUBLICKEY
+        });
+    });
+
 
     return router;
 };

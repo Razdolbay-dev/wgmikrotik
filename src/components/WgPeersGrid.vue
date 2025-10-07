@@ -62,14 +62,21 @@
           </div>
         </div>
 
-        <div class="flex justify-end bg-gray-50 px-4 py-2">
+        <div class="flex bg-gray-50 px-4 py-2">
           <button
               @click="removePeer(peer['.id'])"
-              class="text-sm text-red-600 hover:text-red-800"
+              class="text-sm px-4 py-2 text-red-600 hover:text-red-800"
           >
             Удалить
           </button>
+          <button
+              @click="downloadConfig(peer)"
+              class="text-sm px-4 py-2 text-blue-600 hover:text-blue-800 "
+          >
+            Скачать конфиг
+          </button>
         </div>
+
       </div>
     </div>
 
@@ -88,11 +95,21 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AddPeerModal from './AddPeerModal.vue';
-import { getPeers, deletePeer } from '../api/wgApi.js';
+import { getPeers, deletePeer, getConfigInfo, getInterfaces } from '../api/wgApi.js';
 
+const configInfo = ref(null);
 const peers = ref([]);
 const loading = ref(true);
 const showAddModal = ref(false);
+const interfaces = ref([]);
+
+async function loadConfigInfo() {
+  configInfo.value = await getConfigInfo();
+}
+
+async function loadInterfaces() {
+  interfaces.value = await getInterfaces();
+}
 
 async function loadPeers() {
   loading.value = true;
@@ -120,5 +137,35 @@ function formatBytes(bytes) {
   return `${(num / 1024 / 1024 / 1024).toFixed(1)} GB`;
 }
 
-onMounted(loadPeers);
+async function downloadConfig(peer) {
+  if (!configInfo.value) return alert('Нет данных для генерации конфига');
+
+  const conf = `
+[Interface]
+PrivateKey = ${peer['private-key']}
+Address = ${peer['allowed-address']}
+DNS = ${configInfo.value.dns}
+MTU = 1420
+
+[Peer]
+PublicKey = ${configInfo.value.publickey}
+AllowedIPs = 0.0.0.0/0, ::/0
+Endpoint = ${configInfo.value.endpoint}:${configInfo.value.port}
+PersistentKeepalive = 25
+`.trim();
+
+  const blob = new Blob([conf], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${peer['allowed-address'].replace('/', '_')}.conf`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+onMounted(async () => {
+  await loadInterfaces();
+  await loadPeers();
+  await loadConfigInfo();
+});
 </script>

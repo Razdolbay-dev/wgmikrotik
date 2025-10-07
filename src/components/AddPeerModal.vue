@@ -22,9 +22,9 @@
         </select>
 
         <input
-            v-model="publicKey"
+            v-model="peername"
             type="text"
-            placeholder="Public Key"
+            placeholder="Имя пира"
             class="p-2 border rounded"
         />
 
@@ -47,8 +47,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { addPeer } from '../api/wgApi.js';
+import { ref, onMounted } from 'vue';
+import { getInterfaces, addPeer } from '../api/wgApi.js';
 
 const props = defineProps({
   interfaces: Array
@@ -56,24 +56,29 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'added']);
 
+const interfaces = ref([]);
 const interfaceName = ref('');
-const publicKey = ref('');
+const peername = ref('');
 const allowedAddress = ref('');
 
 async function submit() {
-  if (!interfaceName.value || !publicKey.value) {
+  if (!interfaceName.value || !peername.value) {
     alert('Укажи интерфейс и ключ!');
     return;
   }
 
   await addPeer({
     interfaceName: interfaceName.value,
-    publicKey: publicKey.value,
+    peername: peername.value,
     allowedAddress: allowedAddress.value
   });
 
   emit('added');
 }
+
+onMounted(async () => {
+  interfaces.value = await getInterfaces();
+});
 </script>
 
 <style scoped>

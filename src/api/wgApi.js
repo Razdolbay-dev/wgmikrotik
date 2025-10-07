@@ -23,3 +23,9 @@ export async function deletePeer(id) {
     const res = await api.delete(`/peer/${id}`);
     return res.data;
 }
+
+export async function getConfigInfo() {
+    const res = await fetch('/api/wg/config-info');
+    return res.json();
+}
+

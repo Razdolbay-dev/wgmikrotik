@@ -20,3 +20,13 @@ Content-Type: application/json
 }
 
 ```
+
+MT_HOST='192.168.0.165'
+MT_USER='razdolbay'
+MT_PASS='kjifHm11.06!'
+PORT=3000
+WG_INTERFACE='wg0'
+WG_ENDPOINT='vpn.example.com'
+WG_PORT='51820'
+WG_DNS='1.1.1.1'
+WG_PUBLICKEY='MikrotikPublicKeyHere'
